@@ -70,6 +70,20 @@ public class OkHttpClientFactoryTest {
   public ExpectedException expectedException = ExpectedException.none();
 
   @Test
+  public void support_custom_timeouts() {
+    int connectTimeout = 1000;
+    int readTimeout = 2000;
+    System.setProperty("http.connection.timeout", String.valueOf(connectTimeout));
+    System.setProperty("http.socket.timeout", String.valueOf(readTimeout));
+
+    Logger logger = mock(Logger.class);
+    OkHttpClient underTest = OkHttpClientFactory.create(logger);
+
+    assertThat(underTest.connectTimeoutMillis()).isEqualTo(connectTimeout);
+    assertThat(underTest.readTimeoutMillis()).isEqualTo(readTimeout);
+  }
+
+  @Test
   public void support_tls_versions_of_java8() {
     OkHttpClient underTest = OkHttpClientFactory.create(logger);
 
